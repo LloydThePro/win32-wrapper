@@ -2,6 +2,13 @@
 
 #ifndef RENDER_SYS_H
 #define RENDER_SYS_H
+#ifdef _UNICODE
+#undef _UNICODE
+#endif
+#ifdef UNICODE
+#undef UNICODE
+#endif
+
 #include <Windows.h>
 
 #define WG_MOUSE_ON_CLICK		0b10000000
@@ -21,20 +28,23 @@
 #include <gl\GL.h>
 #include <gl\GLU.h>
 #if defined (_WIN32) && defined(__cplusplus)
-	#if defined (_MSC_VER)
-	#pragma comment(lib, "opengl32.lib")
-	#else
-	#warning "Please link opengl libriaries "opengl32.lib" 
-	#endif // _MSC_VER
+#if defined (_MSC_VER)
+#pragma comment(lib, "opengl32.lib")
+#else
+#warning "Please link opengl libriaries "opengl32.lib" 
+#endif // _MSC_VER
 #else
 #error "For C++ Windows only!!!"
 #endif
 
-typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext, const int *attribList);
-typedef BOOL WINAPI wglChoosePixelFormatARB_type(HDC hdc, const int *piAttribIList, const FLOAT *pfAttribFList, UINT nMaxFormats, int *piFormats, UINT *nNumFormats);
 
-static wglChoosePixelFormatARB_type * wglChoosePixelFormatARB;
-static wglCreateContextAttribsARB_type * wglCreateContextAttribsARB;
+
+
+typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext, const int* attribList);
+typedef BOOL WINAPI wglChoosePixelFormatARB_type(HDC hdc, const int* piAttribIList, const FLOAT* pfAttribFList, UINT nMaxFormats, int* piFormats, UINT* nNumFormats);
+
+static wglChoosePixelFormatARB_type* wglChoosePixelFormatARB;
+static wglCreateContextAttribsARB_type* wglCreateContextAttribsARB;
 #define WG_GL_CONTEXT_CORE_PROFILE 0x00000001
 #define WG_GL_CONTEXT_COMPAT_PROFILE 0x00000002
 
@@ -87,7 +97,7 @@ static wglCreateContextAttribsARB_type * wglCreateContextAttribsARB;
 			*StaticText class for text
 			*TextBox class for inputs
 		-Added member functions for the new component class
-	February-11-2021 
+	February-11-2021
 		-Added Creation of new sub windows
 		*NEED to fix the resizing of sub windows
 	February-16-2021
@@ -128,28 +138,28 @@ class ICompInterface
 protected:
 	uint16_t width, heigth;
 	uint16_t x, y;
-	char * text = nullptr;
+	char* text = nullptr;
 public:
 	void Free();
 	friend class CComponents;
 	virtual int GetType() = 0;
-	const char * GetText();
+	const char* GetText();
 	SSubWin GetDim();
 
 };
 
-class CButton: public ICompInterface
+class CButton : public ICompInterface
 {
 	int message = INT_MIN;
 public:
 	friend class CComponents;
 	const int GetButtonMessage();
 	CButton(CButton& copy);
-	CButton(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char * text, int message);
+	CButton(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char* text, int message);
 	~CButton();
 
 public:
-	
+
 	int GetType();
 };
 
@@ -157,7 +167,7 @@ class CStaticText : public ICompInterface
 {
 public:
 	CStaticText(CStaticText& copy);
-	CStaticText(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char * text);
+	CStaticText(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char* text);
 	~CStaticText();
 
 	int GetType();
@@ -167,7 +177,7 @@ class CTextbox : public ICompInterface
 {
 public:
 	CTextbox(CTextbox& copy);
-	CTextbox(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char * text);
+	CTextbox(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char* text);
 	~CTextbox();
 	int GetType();
 };
@@ -179,7 +189,7 @@ private:
 public:
 	CBitMap();
 	CBitMap(CBitMap& copy);
-	CBitMap(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char * text);
+	CBitMap(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char* text);
 	int GetType();
 };
 
@@ -188,18 +198,18 @@ class CComponents
 private:
 	HWND m_hHwnd = NULL;
 	std::vector<HWND> m_hCompHandle;
-	std::vector<ICompInterface *> m_vComponents;
-	HWND * hParent = nullptr;
+	std::vector<ICompInterface*> m_vComponents;
+	HWND* hParent = nullptr;
 	friend class CWindow;
 	friend int ICompInterface::GetType();
-	friend const char * ICompInterface::GetText();
+	friend const char* ICompInterface::GetText();
 public:
-	const char * GetText(unsigned int index);
-	void GetTextField(unsigned int index,unsigned int count, char * buffer);
-	void SetText(unsigned int index, const char * text);
+	const char* GetText(unsigned int index);
+	void GetTextField(unsigned int index, unsigned int count, char* buffer);
+	void SetText(unsigned int index, const char* text);
 	const int GetComponentCount();
 	void Enable();
-	void AddComponent(ICompInterface * component);
+	void AddComponent(ICompInterface* component);
 	void RemoveComponent(unsigned int index);
 	void Disable();
 	void DestroyComponents();
@@ -217,14 +227,14 @@ private:
 	HINSTANCE m_hInstance = nullptr;
 	WNDCLASS m_wWndcls = {};
 	bool m_bQuitstate = false;
-	static CWindow * m_wWindow;
+	static CWindow* m_wWindow;
 
 
 
 	std::vector<HWND> m_vSubWindows;
 	int m_ButtonMessage = -1;
-	std::vector<CComponents *> m_vCComponentsBound;
-	std::vector<CComponents *> m_vSubWindowCompBound;
+	std::vector<CComponents*> m_vCComponentsBound;
+	std::vector<CComponents*> m_vSubWindowCompBound;
 	std::vector<SSubWin> m_vSubWinSize;
 
 
@@ -238,46 +248,46 @@ private:
 public:
 
 protected:
-	
+
 
 private:
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
-	static void(*KeyCall)(CWindow * window,unsigned char key);
-	static void(*MouseCall)(CWindow *, float x, float y, unsigned char status, unsigned char mouse);
-	static void(*ButtonOut)(CWindow *, int msg);
+	static void(*KeyCall)(CWindow* window, unsigned char key);
+	static void(*MouseCall)(CWindow*, float x, float y, unsigned char status, unsigned char mouse);
+	static void(*ButtonOut)(CWindow*, int msg);
 	static void(*ResizeCall)(int newWidth, int newHeigth);
 
 public:
-	
-	CWindow(unsigned int width, unsigned int height, const char * windowname, unsigned long winmode, vec3col wincol);
-	
+
+	CWindow(unsigned int width, unsigned int height, const char* windowname, unsigned long winmode, vec3col wincol);
+
 	CWindow();
 	CWindow(const CWindow&) = delete;
 	~CWindow();
 
 	void ProcessMessage();
 	void ProcessMessageB();
-	
+
 	bool WindowShouldClose();
 	void SwapWindowBuffers();
-	
-	void SetKeyCallFunc(void(*keycallback)(CWindow *, unsigned char));
-	void SetResizeWindowCallFunc(void(*resizecall)(int, int));
-	void SetMouseCallFunc(void(*mcall) (CWindow *, float x, float y, unsigned char, unsigned char));
-	void SetWindowTitle(const char *title);
 
-	void GetWindowSize(int *, int *);
+	void SetKeyCallFunc(void(*keycallback)(CWindow*, unsigned char));
+	void SetResizeWindowCallFunc(void(*resizecall)(int, int));
+	void SetMouseCallFunc(void(*mcall) (CWindow*, float x, float y, unsigned char, unsigned char));
+	void SetWindowTitle(const char* title);
+
+	void GetWindowSize(int*, int*);
 	void ShowMyWindow();
 
-	void CreateChildWindows(unsigned int width, unsigned int height, int x, int y, const char * windowname, unsigned long winmode, vec3col wincol);
-	void OpenFileExplorer(char * buffer, size_t maxsize);
+	void CreateChildWindows(unsigned int width, unsigned int height, int x, int y, const char* windowname, unsigned long winmode, vec3col wincol);
+	void OpenFileExplorer(char* buffer, size_t maxsize);
 	const int GetButtonMessage();
-	void InitComponents(unsigned int childwindowindex, CComponents * components);
-	void InitComponents(CComponents * components);
-	
+	void InitComponents(unsigned int childwindowindex, CComponents* components);
+	void InitComponents(CComponents* components);
+
 	void HideWindow();
 
-	
+
 
 
 	/*----------for openGL-----------*/
@@ -287,7 +297,7 @@ public:
 	/*-------------------------------*/
 
 
-	
+
 };
 
 

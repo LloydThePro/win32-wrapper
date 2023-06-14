@@ -2,11 +2,11 @@
 
 
 bool CWindow::m_bMouseDrag = false;
-COORD CWindow::m_WindowDim = {0,0};
-CWindow * CWindow::m_wWindow = nullptr;
-void(*CWindow::ButtonOut)(CWindow *, int msg) = nullptr;
-void(*CWindow::KeyCall)(CWindow * window, unsigned char key) = nullptr;
-void(*CWindow::MouseCall)(CWindow *, float x, float y, unsigned char status, unsigned char mouse) = nullptr;
+COORD CWindow::m_WindowDim = { 0,0 };
+CWindow* CWindow::m_wWindow = nullptr;
+void(*CWindow::ButtonOut)(CWindow*, int msg) = nullptr;
+void(*CWindow::KeyCall)(CWindow* window, unsigned char key) = nullptr;
+void(*CWindow::MouseCall)(CWindow*, float x, float y, unsigned char status, unsigned char mouse) = nullptr;
 void(*CWindow::ResizeCall)(int newWidth, int newHeigth) = nullptr;
 
 static const int VERSION_MINOR;
@@ -24,7 +24,7 @@ vec3col::vec3col(float R, float G, float B) :r(R * 255), g(G * 255), b(B * 255) 
 vec3col::vec3col(byte R, byte G, byte B) : r(R), g(G), b(B) {}
 
 
-CWindow::CWindow(unsigned int width, unsigned int height, const char * windowname, unsigned long winmode, vec3col wincol)
+CWindow::CWindow(unsigned int width, unsigned int height, const char* windowname, unsigned long winmode, vec3col wincol)
 {
 
 	this->m_iHeigth = height;
@@ -48,11 +48,11 @@ CWindow::CWindow(unsigned int width, unsigned int height, const char * windownam
 	m_wWndcls.style = CS_VREDRAW | CS_HREDRAW | CS_OWNDC;
 	RegisterClass(&m_wWndcls);
 
-	this->m_hWinhwn = CreateWindow(windowname, windowname, winmode, CW_USEDEFAULT, CW_USEDEFAULT, width, height, nullptr, nullptr, m_hInstance, nullptr);
+	this->m_hWinhwn = CreateWindowA(windowname, windowname, winmode, CW_USEDEFAULT, CW_USEDEFAULT, width, height, nullptr, nullptr, m_hInstance, nullptr);
 	CWindow::m_wWindow = this;
 	ShowWindow(m_hWinhwn, SW_SHOW);
 
-	
+
 
 }
 void CWindow::ProcessMessage()
@@ -76,7 +76,7 @@ void CWindow::ProcessMessageB()
 }
 
 void CWindow::SetResizeWindowCallFunc(void(*resizecall)(int, int)) { ResizeCall = resizecall; }
-void CWindow::SetMouseCallFunc(void(*mcall)(CWindow *, float x, float y, unsigned char, unsigned char)) { CWindow::MouseCall = mcall; }
+void CWindow::SetMouseCallFunc(void(*mcall)(CWindow*, float x, float y, unsigned char, unsigned char)) { CWindow::MouseCall = mcall; }
 CWindow::CWindow()
 {
 }
@@ -92,7 +92,7 @@ CWindow::~CWindow()
 void CWindow::CreateOpenGLContext()
 {
 	m_hdc = GetDC(this->m_hWinhwn);
-	
+
 	PIXELFORMATDESCRIPTOR m_pxlform = { 0 };
 	int m_iPxlFormat;
 	m_pxlform = {
@@ -120,10 +120,10 @@ void CWindow::CreateOpenGLContext()
 	m_iPxlFormat = ChoosePixelFormat(m_hdc, &m_pxlform);
 	SetPixelFormat(m_hdc, m_iPxlFormat, &m_pxlform);
 	m_hglrc = wglCreateContext(m_hdc);
-	
+
 	wglMakeCurrent(m_hdc, m_hglrc);
-	
-	
+
+
 }
 
 void CWindow::CreateOpenGLContext(unsigned int glMajor, unsigned int glMinor, unsigned int glProfile)
@@ -136,7 +136,7 @@ void CWindow::CreateOpenGLContext(unsigned int glMajor, unsigned int glMinor, un
 	windowname[127] = 0;
 	int width, heigth;
 	GetWindowSize(&width, &heigth);
-	GetWindowText(m_hWinhwn, windowname, 127);
+	GetWindowTextA(m_hWinhwn, windowname, 127);
 	DestroyWindow(m_hWinhwn);
 
 	m_bQuitstate = false;
@@ -151,12 +151,12 @@ void CWindow::CreateOpenGLContext(unsigned int glMajor, unsigned int glMinor, un
 	m_wWndcls.style = CS_OWNDC;
 	RegisterClass(&m_wWndcls);
 
-	this->m_hWinhwn = CreateWindow(windowname, windowname, m_wStyle, CW_USEDEFAULT, CW_USEDEFAULT, width, heigth, nullptr, nullptr, m_hInstance, nullptr);
+	this->m_hWinhwn = CreateWindowA(windowname, windowname, m_wStyle, CW_USEDEFAULT, CW_USEDEFAULT, width, heigth, nullptr, nullptr, m_hInstance, nullptr);
 	CWindow::m_wWindow = this;
 	ShowWindow(m_hWinhwn, SW_SHOW);
 
 	m_hdc = GetDC(this->m_hWinhwn);
-	
+
 
 	int pixel_format_attribs[] = {
 		WGL_DRAW_TO_WINDOW_ARB,     GL_TRUE,
@@ -172,12 +172,12 @@ void CWindow::CreateOpenGLContext(unsigned int glMajor, unsigned int glMinor, un
 	int pixelformat;
 	UINT num_formats;
 	wglChoosePixelFormatARB(m_hdc, pixel_format_attribs, 0, 1, &pixelformat, &num_formats);
-	
+
 
 	PIXELFORMATDESCRIPTOR pfd;
 	DescribePixelFormat(m_hdc, pixelformat, sizeof(pfd), &pfd);
 	SetPixelFormat(m_hdc, pixelformat, &pfd);
-	
+
 
 	int glattribs[] = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, glMajor,
@@ -211,7 +211,7 @@ void CWindow::SwapWindowBuffers()
 {
 	SwapBuffers(m_hdc);
 }
-void CWindow::SetKeyCallFunc(void(*keycallback)(CWindow *,unsigned char))
+void CWindow::SetKeyCallFunc(void(*keycallback)(CWindow*, unsigned char))
 {
 	KeyCall = keycallback;
 }
@@ -229,7 +229,7 @@ void CWindow::HideWindow()
 {
 	ShowWindow(this->m_hWinhwn, SW_HIDE);
 }
-void CWindow::CreateChildWindows(unsigned int width, unsigned int height, int x, int y, const char * windowname, unsigned long winmode, vec3col wincol)
+void CWindow::CreateChildWindows(unsigned int width, unsigned int height, int x, int y, const char* windowname, unsigned long winmode, vec3col wincol)
 {
 	SSubWin param;
 	param.heigth = height;
@@ -247,20 +247,20 @@ void CWindow::CreateChildWindows(unsigned int width, unsigned int height, int x,
 	m_wWndcls.lpszClassName = windowname;
 	m_wWndcls.style = CS_VREDRAW | CS_HREDRAW;
 	RegisterClass(&m_wWndcls);
-	m_vSubWindows.push_back(CreateWindow(windowname, windowname, winmode | WS_CHILD, x, y, width, height, m_hWinhwn, nullptr, m_hInstance, nullptr));
+	m_vSubWindows.push_back(CreateWindowA(windowname, windowname, winmode | WS_CHILD, x, y, width, height, m_hWinhwn, nullptr, m_hInstance, nullptr));
 	m_vSubWinSize.push_back(param);
 	ShowWindow(m_hWinhwn, SW_SHOW);
 }
 
 
 
-const int CWindow::GetButtonMessage(){ return m_ButtonMessage;}
+const int CWindow::GetButtonMessage() { return m_ButtonMessage; }
 
 
 
-void CWindow::OpenFileExplorer(char * buffer, size_t maxsize)
+void CWindow::OpenFileExplorer(char* buffer, size_t maxsize)
 {
-	OPENFILENAME File = {0};
+	OPENFILENAME File = { 0 };
 	File.hwndOwner = m_hWinhwn;
 	File.lpstrFile = buffer;
 	memset(File.lpstrFile, '\0', maxsize);
@@ -271,7 +271,7 @@ void CWindow::OpenFileExplorer(char * buffer, size_t maxsize)
 }
 
 
-void CWindow::InitComponents(unsigned int childwindowindex, CComponents * components)
+void CWindow::InitComponents(unsigned int childwindowindex, CComponents* components)
 {
 	int size = m_vSubWindows.size();
 	if (size > 0 && childwindowindex < size)
@@ -281,7 +281,7 @@ void CWindow::InitComponents(unsigned int childwindowindex, CComponents * compon
 	}
 }
 
-void CWindow::InitComponents(CComponents * components)
+void CWindow::InitComponents(CComponents* components)
 {
 	if (components != nullptr)
 	{
@@ -292,7 +292,7 @@ void CWindow::InitComponents(CComponents * components)
 
 
 
-void CWindow::GetWindowSize(int * width, int * heigth)
+void CWindow::GetWindowSize(int* width, int* heigth)
 {
 	if (width != nullptr && heigth != nullptr)
 	{
@@ -301,13 +301,13 @@ void CWindow::GetWindowSize(int * width, int * heigth)
 	}
 }
 
-void CWindow::SetWindowTitle(const char * title)
+void CWindow::SetWindowTitle(const char* title)
 {
 	SetWindowText(CWindow::m_hWinhwn, title);
 }
 LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
-	
+
 
 	switch (msg)
 	{
@@ -317,7 +317,7 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 
 	case WM_QUIT:
-		
+
 		break;
 
 	case WM_SIZE:
@@ -355,7 +355,7 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			}
 
 
-			
+
 		}
 
 	}
@@ -363,8 +363,8 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
 
-		if(m_wWindow->m_hWinhwn == hwnd)
-		m_wWindow->m_bQuitstate = true;
+		if (m_wWindow->m_hWinhwn == hwnd)
+			m_wWindow->m_bQuitstate = true;
 		else
 		{
 
@@ -386,14 +386,14 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		PostQuitMessage(0);
 		break;
 
-	
+
 
 	case WM_KEYDOWN:
 		if (m_wWindow->KeyCall != nullptr)
 			m_wWindow->KeyCall(m_wWindow, (unsigned char)wp);
 		break;
 	case WM_KEYUP:
-		if(m_wWindow->KeyCall!=nullptr)
+		if (m_wWindow->KeyCall != nullptr)
 			m_wWindow->KeyCall(m_wWindow, (unsigned char)wp);
 		break;
 
@@ -404,13 +404,13 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	break;
 
 
-	
-	
-	
-		
+
+
+
+
 	case WM_LBUTTONDOWN:
 	{
-		
+
 		POINT pt = { LOWORD(lp), HIWORD(lp) };
 		if (DragDetect(hwnd, pt))
 		{
@@ -423,12 +423,12 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			float fy = pt.y + (40 * (float)pt.y / m_wWindow->m_iHeigth);
 
 
-			if (m_wWindow->m_bMouseDrag)MouseCall(m_wWindow, fx , fy, WG_MOUSE_ON_HELD, WG_MOUSE_LEFT);
+			if (m_wWindow->m_bMouseDrag)MouseCall(m_wWindow, fx, fy, WG_MOUSE_ON_HELD, WG_MOUSE_LEFT);
 			else MouseCall(m_wWindow, fx, fy, WG_MOUSE_ON_CLICK, WG_MOUSE_LEFT);
 		}
 
 	}
-	
+
 	case WM_MOUSEMOVE:
 		if (m_wWindow->m_bMouseDrag)
 		{
@@ -437,7 +437,7 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			float fy = pt.y + (40 * (float)pt.y / m_wWindow->m_iHeigth);
 
 			if (MouseCall != nullptr)
-			MouseCall(m_wWindow, fx, fy, WG_MOUSE_ON_HELD, WG_MOUSE_LEFT | WG_MOUSE_RIGHT);
+				MouseCall(m_wWindow, fx, fy, WG_MOUSE_ON_HELD, WG_MOUSE_LEFT | WG_MOUSE_RIGHT);
 
 		}
 		break;
@@ -445,18 +445,18 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	{
 		if (m_wWindow->m_bMouseDrag)m_wWindow->m_bMouseDrag = false;
 
-		if (MouseCall != nullptr) 
-		{ 
+		if (MouseCall != nullptr)
+		{
 			POINT pt = { LOWORD(lp), HIWORD(lp) };
 			float fx = pt.x + (20 * (float)pt.x / m_wWindow->m_iWidth);
 			float fy = pt.y + (40 * (float)pt.y / m_wWindow->m_iHeigth);
 			MouseCall(m_wWindow, fx, fy, WG_MOUSE_ON_RELEASE, WG_MOUSE_LEFT);
 		}
 	}
-		break;
+	break;
 	case WM_RBUTTONDOWN:
 	{
-		
+
 		POINT pt = { LOWORD(lp), HIWORD(lp) };
 		if (DragDetect(hwnd, pt))
 		{
@@ -506,7 +506,7 @@ LRESULT CALLBACK CWindow::WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 /*---------- PANELS ----------*/
 
-const char * CComponents::GetText(unsigned int index)
+const char* CComponents::GetText(unsigned int index)
 {
 
 	const unsigned int size = m_vComponents.size();
@@ -514,14 +514,14 @@ const char * CComponents::GetText(unsigned int index)
 	return m_vComponents[index]->GetText();
 }
 
-void CComponents::GetTextField(unsigned int index, unsigned int count, char * buffer)
+void CComponents::GetTextField(unsigned int index, unsigned int count, char* buffer)
 {
 	if (m_vComponents.size() < 1 || index >= m_vComponents.size() || buffer == nullptr)return;
 
 	GetWindowText(m_hCompHandle[index], buffer, count);
 }
 
-void CComponents::SetText(unsigned int index, const char * text)
+void CComponents::SetText(unsigned int index, const char* text)
 {
 	if (m_vComponents.size() < 1 || index >= m_vComponents.size() || text == nullptr)return;
 	SetWindowText(m_hCompHandle[index], text);
@@ -541,61 +541,61 @@ void CComponents::Enable()
 }
 
 
-void CComponents::AddComponent(ICompInterface * component)
+void CComponents::AddComponent(ICompInterface* component)
 {
-	
-	if(hParent != nullptr)
-	switch (component->GetType())
-	{
-	case 1:
-	{
-		CButton * button = dynamic_cast<CButton*>component;
 
-		m_vComponents.push_back(new CButton(*button));
-		
-		m_hCompHandle.push_back(CreateWindow("Button", button->GetText(), WS_CHILD | WS_VISIBLE | WS_BORDER, component->x, component->y, component->width, component->heigth, *CComponents::hParent, (HMENU)button->message, nullptr, nullptr));
-		
-	}
+	if (hParent != nullptr)
+		switch (component->GetType())
+		{
+		case 1:
+		{
+			CButton* button = dynamic_cast<CButton*>(component);
+
+			m_vComponents.push_back(new CButton(*button));
+
+			m_hCompHandle.push_back(CreateWindowA("Button", button->GetText(), WS_CHILD | WS_VISIBLE | WS_BORDER, component->x, component->y, component->width, component->heigth, *CComponents::hParent, (HMENU)button->message, nullptr, nullptr));
+
+		}
 		break;
 
-	case 2:
-	{
-		CStaticText * text = dynamic_cast<CStaticText *>component;
+		case 2:
+		{
+			CStaticText* text = dynamic_cast<CStaticText*>(component);
 
-		m_vComponents.push_back(new CStaticText(*text));
+			m_vComponents.push_back(new CStaticText(*text));
 
-		m_hCompHandle.push_back(CreateWindow("Static", component->text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, component->x, component->y, component->width, component->heigth, *CComponents::hParent, nullptr, nullptr, nullptr));
-		
-	}
+			m_hCompHandle.push_back(CreateWindowA("Static", component->text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, component->x, component->y, component->width, component->heigth, *CComponents::hParent, nullptr, nullptr, nullptr));
+
+		}
 		break;
 
-	case 3:
-	{
-		CTextbox * text = dynamic_cast<CTextbox*>component;
+		case 3:
+		{
+			CTextbox* text = dynamic_cast<CTextbox*>(component);
 
-		m_vComponents.push_back(new CTextbox(*text));
+			m_vComponents.push_back(new CTextbox(*text));
 
-		m_hCompHandle.push_back(CreateWindow("Edit", component->text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, component->x, component->y, component->width, component->heigth, *CComponents::hParent, nullptr, nullptr, nullptr));
-		
-	}
-	break;
-	case 4:
-	{
-		CBitMap * bitmap = dynamic_cast<CBitMap *>component;
-		m_vComponents.push_back(new CBitMap(*bitmap));
-		HBITMAP img = (HBITMAP)LoadImage(NULL, bitmap->text, IMAGE_BITMAP, component->width, component->heigth, LR_LOADFROMFILE);
-		m_hCompHandle.push_back(CreateWindow("Static", NULL, WS_CHILD | WS_VISIBLE | SS_BITMAP, component->x, component->y, component->width, component->heigth, *CComponents::hParent, nullptr, nullptr, nullptr));
-		int size = m_hCompHandle.size();
-		SendMessage(m_hCompHandle[size - 1], STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)img);
-		
-	}
-	break;
+			m_hCompHandle.push_back(CreateWindowA("Edit", component->text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, component->x, component->y, component->width, component->heigth, *CComponents::hParent, nullptr, nullptr, nullptr));
 
-	default:
+		}
 		break;
-	}
+		case 4:
+		{
+			CBitMap* bitmap = dynamic_cast<CBitMap*>(component);
+			m_vComponents.push_back(new CBitMap(*bitmap));
+			HBITMAP img = (HBITMAP)LoadImage(NULL, bitmap->text, IMAGE_BITMAP, component->width, component->heigth, LR_LOADFROMFILE);
+			m_hCompHandle.push_back(CreateWindowA("Static", NULL, WS_CHILD | WS_VISIBLE | SS_BITMAP, component->x, component->y, component->width, component->heigth, *CComponents::hParent, nullptr, nullptr, nullptr));
+			int size = m_hCompHandle.size();
+			SendMessage(m_hCompHandle[size - 1], STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)img);
 
-	
+		}
+		break;
+
+		default:
+			break;
+		}
+
+
 }
 
 void CComponents::RemoveComponent(unsigned int index)
@@ -603,15 +603,15 @@ void CComponents::RemoveComponent(unsigned int index)
 	if (m_vComponents.size() > 0 && index < m_vComponents.size())
 	{
 		DestroyWindow(m_hCompHandle[index]);
-		
+
 		m_hCompHandle.erase(m_hCompHandle.begin() + index);
 		m_vComponents[index]->Free();
-		
+
 		delete m_vComponents[index];
 		m_vComponents.erase(m_vComponents.begin() + index);
-		
+
 	}
-	
+
 }
 
 
@@ -653,7 +653,7 @@ const int CButton::GetButtonMessage()
 	return message;
 }
 
-CButton::CButton(CButton & copy)
+CButton::CButton(CButton& copy)
 {
 	if (copy.text != nullptr)
 	{
@@ -671,7 +671,7 @@ CButton::CButton(CButton & copy)
 	message = copy.message;
 }
 
-CButton::CButton(uint16_t width, uint16_t heigth,uint16_t x, uint16_t y,const char * text, int message)
+CButton::CButton(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char* text, int message)
 {
 	int size = strlen(text);
 	this->x = x;
@@ -699,7 +699,7 @@ int CButton::GetType()
 	return 1;
 }
 
-CStaticText::CStaticText(CStaticText & copy)
+CStaticText::CStaticText(CStaticText& copy)
 {
 	if (copy.text != nullptr)
 	{
@@ -716,14 +716,14 @@ CStaticText::CStaticText(CStaticText & copy)
 	y = copy.y;
 }
 
-CStaticText::CStaticText(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char * text)
+CStaticText::CStaticText(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char* text)
 {
 	int size = strlen(text);
 	this->x = x;
 	this->y = y;
 	this->width = width;
 	this->heigth = heigth;
-	
+
 
 	if (size > 1)
 	{
@@ -744,7 +744,7 @@ int CStaticText::GetType()
 	return 2;
 }
 
-CTextbox::CTextbox(CTextbox & copy)
+CTextbox::CTextbox(CTextbox& copy)
 {
 	if (copy.text != nullptr)
 	{
@@ -761,7 +761,7 @@ CTextbox::CTextbox(CTextbox & copy)
 	y = copy.y;
 }
 
-CTextbox::CTextbox(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char * text)
+CTextbox::CTextbox(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char* text)
 {
 	int size = strlen(text);
 	this->x = x;
@@ -793,7 +793,7 @@ void ICompInterface::Free()
 	if (text != nullptr)delete[] text;
 }
 
-const char * ICompInterface::GetText()
+const char* ICompInterface::GetText()
 {
 	return text;
 }
@@ -808,9 +808,9 @@ SSubWin ICompInterface::GetDim()
 	return s;
 }
 
-CBitMap::CBitMap(){}
+CBitMap::CBitMap() {}
 
-CBitMap::CBitMap(CBitMap & copy)
+CBitMap::CBitMap(CBitMap& copy)
 {
 	if (copy.text != nullptr)
 	{
@@ -827,7 +827,7 @@ CBitMap::CBitMap(CBitMap & copy)
 	y = copy.y;
 }
 
-CBitMap::CBitMap(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char * text)
+CBitMap::CBitMap(uint16_t width, uint16_t heigth, uint16_t x, uint16_t y, const char* text)
 {
 	int size = strlen(text);
 	this->x = x;
